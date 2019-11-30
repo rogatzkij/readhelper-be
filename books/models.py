@@ -30,9 +30,15 @@ class Book(models.Model):
         postfix = ("", "!", ",")
         status = ("NEW", "LEARNING", "KNOWN")
 
+
         for i in range(self.page_size):
             words.append(Book.Word(i + page * self.page_size, random.choice(en), random.choice(ru),
                                    postfix=random.choice(postfix), status=random.choice(status)))
+
+        # Сохраняем текущую страницу
+        self.current = page
+        self.save()
+
         return words
 
     class Word:
