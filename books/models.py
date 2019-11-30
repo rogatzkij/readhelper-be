@@ -1,4 +1,3 @@
-import json
 import random
 
 # Create your models here.
@@ -59,9 +58,6 @@ class Book(models.Model):
             self.translate = translate
             # знаки препиания
             self.postfix = postfix
-
-        def __json__(self):
-            return json.dumps(self.__dict__)
 
     class Meta:
         verbose_name = "Книга"
