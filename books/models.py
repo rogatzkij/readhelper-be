@@ -4,12 +4,14 @@ import random
 from django.contrib.auth.models import User
 from django.db import models
 
+from readhelper.settings import BASE_DIR
 
 class Book(models.Model):
     """Класс описывает Книгу"""
     #  Информация о книге
     owner = models.ForeignKey(User, verbose_name="Владелец книги", on_delete=models.CASCADE)
     filename = models.CharField(verbose_name="Название файла", max_length=50)
+    local_file = models.CharField(verbose_name="Файл на сервере", max_length=50)
     date = models.DateField(verbose_name="Дата создания")
 
     # Все что касается страниц книги
@@ -23,15 +25,26 @@ class Book(models.Model):
 
     def get_page(self, page):
         """Метод служит для получения странцы (заглушка)"""
+        # Все слова на странице
         words = []
-        en = ("cat", "dog")
+
+        # Все слова в книге
+        all_words = []
+
+        # Тестовые данные
         ru = ("кот", "пес")
         postfix = ("", "!", ",")
         status = ("NEW", "LEARNING", "KNOWN")
 
 
-        for i in range(self.page_size):
-            words.append(Book.Word(i + page * self.page_size, random.choice(en), random.choice(ru),
+        # Читаем все слова из книги
+        with open(BASE_DIR + "/local_storage/" + self.local_file) as file_book:
+            for line in file_book:
+                all_words.extend(line.split())
+
+        # Формируем список слов на текущей странице
+        for i in range(page*self.page_size, page * self.page_size + self.page_size):
+            words.append(Book.Word(i + page * self.page_size, all_words[i], random.choice(ru),
                                    postfix=random.choice(postfix), status=random.choice(status)))
 
         # Сохраняем текущую страницу
