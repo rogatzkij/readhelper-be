@@ -1,12 +1,17 @@
+import os
 import random
 
 # Create your models here.
 from django.contrib.auth.models import User
 from django.db import models
 
+# Модели readhelper
 from readhelper.settings import LOCAL_BOOK_STORAGE
+from dictionary.models import TranslateWord
 
-import os
+# Библиотеки для работы с текстом
+import string
+from textblob import Word as LemmatizeWord
 
 class Book(models.Model):
     """Класс описывает Книгу"""
@@ -34,20 +39,34 @@ class Book(models.Model):
         all_words = []
 
         # Тестовые данные
-        ru = ("кот", "пес")
-        postfix = ("", "!", ",")
         status = ("NEW", "LEARNING", "KNOWN")
 
-
         # Читаем все слова из книги
-        with open( os.path.join(LOCAL_BOOK_STORAGE, self.local_file) ) as file_book:
+        with open(os.path.join(LOCAL_BOOK_STORAGE, self.local_file)) as file_book:
             for line in file_book:
                 all_words.extend(line.split())
 
         # Формируем список слов на текущей странице
-        for i in range(page*self.page_size, page * self.page_size + self.page_size):
-            words.append(Book.Word(i + page * self.page_size, all_words[i], random.choice(ru),
-                                   postfix=random.choice(postfix), status=random.choice(status)))
+        for i in range(page * self.page_size, page * self.page_size + self.page_size):
+            try:
+                # Отсекаем знаки препинания
+                word = all_words[i].rstrip(string.punctuation)
+
+                # Лематизируем слово
+                word = LemmatizeWord(word).lemmatize()
+
+                # Находим слово в базе
+                word = TranslateWord.objects.get(word=word)
+
+                # Добавляем в список переводов слов на странице
+                words.append(Book.Word(i + page * self.page_size,
+                                       word.word,
+                                       word.translate,
+                                       level=word.frequency,
+                                       status=random.choice(status)))
+            except:
+                # Если не нашли
+                words.append(Book.Word(i + page * self.page_size, all_words[i], "Перевод не найден", status=random.choice(status)))
 
         # Сохраняем текущую страницу
         self.current = page
@@ -58,7 +77,7 @@ class Book(models.Model):
     class Word:
         """Класс описывает переведенное слово"""
 
-        def __init__(self, position, word, translate, dict_id='-1', level='0', status='NEW', postfix=''):
+        def __init__(self, position, word, translate, dict_id='-1', level='-1', status='NEW', postfix=''):
             # id  в словаре
             self.dict_id = dict_id
             # позиция в книге
