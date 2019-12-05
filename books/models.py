@@ -60,7 +60,7 @@ class Book(models.Model):
                 word = TranslateWord.objects.get(word=word)
 
                 # Добавляем в список переводов слов на странице
-                words.append(Book.Word(i + page * self.page_size,
+                words.append(Book.Word(i,
                                        all_words[i],
                                        word.translate,
                                        level=word.frequency,
