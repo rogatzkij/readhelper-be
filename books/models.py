@@ -51,6 +51,7 @@ class Book(models.Model):
             try:
                 # Отсекаем знаки препинания
                 word = all_words[i].rstrip(string.punctuation)
+                word = word.lower()
 
                 # Лематизируем слово
                 word = LemmatizeWord(word).lemmatize()
@@ -60,7 +61,7 @@ class Book(models.Model):
 
                 # Добавляем в список переводов слов на странице
                 words.append(Book.Word(i + page * self.page_size,
-                                       word.word,
+                                       all_words[i],
                                        word.translate,
                                        level=word.frequency,
                                        status=random.choice(status)))
