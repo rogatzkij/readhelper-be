@@ -28,6 +28,8 @@ DEBUG = True
 # Можнор запускать на любых хостах
 ALLOWED_HOSTS = ['*']
 
+# Каталог с книгами на сервере
+LOCAL_BOOK_STORAGE = os.path.join(BASE_DIR, 'local_storage')
 
 # Application definition
 
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
     # Мои приложения
     'books',
     'user',
+    'dictionary',
 ]
 
 MIDDLEWARE = [

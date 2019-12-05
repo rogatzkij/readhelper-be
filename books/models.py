@@ -4,7 +4,9 @@ import random
 from django.contrib.auth.models import User
 from django.db import models
 
-from readhelper.settings import BASE_DIR
+from readhelper.settings import LOCAL_BOOK_STORAGE
+
+import os
 
 class Book(models.Model):
     """Класс описывает Книгу"""
@@ -38,7 +40,7 @@ class Book(models.Model):
 
 
         # Читаем все слова из книги
-        with open(BASE_DIR + "/local_storage/" + self.local_file) as file_book:
+        with open( os.path.join(LOCAL_BOOK_STORAGE, self.local_file) ) as file_book:
             for line in file_book:
                 all_words.extend(line.split())
 
