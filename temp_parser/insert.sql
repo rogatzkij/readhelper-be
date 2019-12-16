@@ -1,6 +1,3 @@
-
-SELECT min("frequency") FROM  "dictionary_translateword"
-
 INSERT INTO "dictionary_translateword" (`word`, `translate`, `frequency`) VALUES ('killings', 'убийства', 51);
 INSERT INTO "dictionary_translateword" (`word`, `translate`, `frequency`) VALUES ('aah', 'ахать', 845);
 INSERT INTO "dictionary_translateword" (`word`, `translate`, `frequency`) VALUES ('abandon', 'отказываться от', 244);

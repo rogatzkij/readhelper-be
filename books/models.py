@@ -44,16 +44,17 @@ class Book(models.Model):
         # Читаем все слова из книги
         with open(os.path.join(LOCAL_BOOK_STORAGE, self.local_file)) as file_book:
             for line in file_book:
-                all_words.extend(line.split())
+                all_words.extend(line.split(' '))
 
         # Формируем список слов на текущей странице
         for i in range(page * self.page_size, page * self.page_size + self.page_size):
-            try:
-                # Отсекаем знаки препинания
-                word = all_words[i].rstrip(string.punctuation)
-                word = word.lower()
+            # Отсекаем знаки препинания
+            word_without_postfix = all_words[i].rstrip(string.whitespace).rstrip(string.punctuation)
+            postfix = all_words[i][len(word_without_postfix):]
 
+            try:
                 # Лематизируем слово
+                word = word_without_postfix.lower()
                 word = LemmatizeWord(word).lemmatize()
 
                 # Находим слово в базе
@@ -61,16 +62,25 @@ class Book(models.Model):
 
                 # Добавляем в список переводов слов на странице
                 words.append(Book.Word(i,
-                                       all_words[i],
+                                       word_without_postfix,
                                        word.translate,
+                                       dict_id=word.word_id,
+                                       postfix=postfix,
                                        level=word.frequency,
                                        status=random.choice(status)))
             except:
                 # Если не нашли
-                words.append(Book.Word(i + page * self.page_size, all_words[i], "Перевод не найден", status=random.choice(status)))
+                words.append(Book.Word(
+                    i,
+                    word_without_postfix,
+                    "Перевод не найден",
+                    postfix=postfix,
+                    status=random.choice(status)))
 
         # Сохраняем текущую страницу
         self.current = page
+        # Сохраняем кол-во страниц
+        self.count = int(len(all_words) / self.page_size) - 1
         self.save()
 
         return words

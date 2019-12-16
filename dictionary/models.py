@@ -3,7 +3,8 @@ from django.db import models
 # Create your models here.
 
 class TranslateWord(models.Model):
-    word = models.CharField(verbose_name="Слово", primary_key=True, max_length=15)
+    word_id = models.AutoField(verbose_name="ID", primary_key=True)
+    word = models.CharField(verbose_name="Слово", db_index=True, max_length=15)
     translate = models.CharField(verbose_name="Перевод", max_length=15)
     frequency = models.IntegerField(verbose_name="Частота")
 
