@@ -17,7 +17,7 @@ class Book(models.Model):
     """Класс описывает Книгу"""
     #  Информация о книге
     owner = models.ForeignKey(User, verbose_name="Владелец книги", on_delete=models.CASCADE)
-    filename = models.CharField(verbose_name="Название файла", max_length=50)
+    filename = models.CharField(verbose_name="Название книги", max_length=50)
     local_file = models.CharField(verbose_name="Файл на сервере", max_length=50)
     date = models.DateField(verbose_name="Дата создания")
 
@@ -84,7 +84,6 @@ class Book(models.Model):
 
     class Word:
         """Класс описывает переведенное слово"""
-
         def __init__(self, position, word, translate, dict_id='-1', level='-1', status='NEW', postfix=''):
             # id  в словаре
             self.dict_id = dict_id

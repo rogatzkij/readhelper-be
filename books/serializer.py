@@ -22,6 +22,8 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 class WordSerializer(serializers.Serializer):
+    """Сериализация страницы"""
+
     dict_id = serializers.IntegerField()
     position = serializers.IntegerField()
     word = serializers.CharField(max_length=20)

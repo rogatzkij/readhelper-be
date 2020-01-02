@@ -4,11 +4,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from books.models import Book
+
 from books.serializer import BookSerializer
 from books.serializer import WordSerializer
 
 
 class BookView(APIView):
+    """ Список доступных книг """
     permission_classes = [permissions.AllowAny, ]
 
     def get(self, request):
@@ -18,6 +20,7 @@ class BookView(APIView):
 
 
 class PageView(APIView):
+    """ Просмотр содержимого книги """
     permission_classes = [permissions.AllowAny, ]
 
     def get(self, request):
@@ -26,13 +29,13 @@ class PageView(APIView):
             position = int(request.GET.get("position"))
             count = int(request.GET.get("count"))
         except:
-            return Response(status=400, data='Не правильный тип параметра book или page')
+            return Response(status=400, data='Не правильный тип параметра book, page или position')
 
         try:
             book = Book.objects.get(id=book_id)
             words = book.get_page(position, count)
         except:
-            return Response(status=404)
+            return Response(status=404, data='Книга с таким id не найдена')
 
         serializer = WordSerializer(words, many=True)
         return JsonResponse({'words': serializer.data})
