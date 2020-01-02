@@ -23,13 +23,14 @@ class PageView(APIView):
     def get(self, request):
         try:
             book_id = int(request.GET.get("book"))
-            page = int(request.GET.get("page"))
+            position = int(request.GET.get("position"))
+            count = int(request.GET.get("count"))
         except:
-            return Response(status=400)
+            return Response(status=400, data='Не правильный тип параметра book или page')
 
         try:
             book = Book.objects.get(id=book_id)
-            words = book.get_page(page)
+            words = book.get_page(position, count)
         except:
             return Response(status=404)
 

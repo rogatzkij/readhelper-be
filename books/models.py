@@ -21,16 +21,15 @@ class Book(models.Model):
     local_file = models.CharField(verbose_name="Файл на сервере", max_length=50)
     date = models.DateField(verbose_name="Дата создания")
 
-    # Все что касается страниц книги
-    current = models.IntegerField(verbose_name="Текущая страница")
-    count = models.IntegerField(verbose_name="Всего страниц")
-    page_size = models.IntegerField(verbose_name="Размер страницы")
+    # Все что касается позиции книги
+    current = models.IntegerField(verbose_name="Текущая позиция (слово)")
+    count = models.IntegerField(verbose_name="Всего слов")
 
     # bookmarks
     # hash
     # color
 
-    def get_page(self, page):
+    def get_page(self, position, count):
         """Метод служит для получения странцы (заглушка)"""
         # Все слова на странице
         words = []
@@ -47,7 +46,7 @@ class Book(models.Model):
                 all_words.extend(line.split(' '))
 
         # Формируем список слов на текущей странице
-        for i in range(page * self.page_size, page * self.page_size + self.page_size):
+        for i in range(position, position + count):
             # Отсекаем знаки препинания
             word_without_postfix = all_words[i].rstrip(string.whitespace).rstrip(string.punctuation)
             postfix = all_words[i][len(word_without_postfix):]
@@ -77,10 +76,8 @@ class Book(models.Model):
                     postfix=postfix,
                     status=random.choice(status)))
 
-        # Сохраняем текущую страницу
-        self.current = page
-        # Сохраняем кол-во страниц
-        self.count = int(len(all_words) / self.page_size) - 1
+        # Сохраняем текущую позицию в книге
+        self.current = position
         self.save()
 
         return words
