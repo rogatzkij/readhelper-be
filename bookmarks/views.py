@@ -13,7 +13,7 @@ from books.models import Book
 # Create your views here.
 class BookmarksView(APIView):
     """ Просмотр и добавление закладок """
-    permission_classes = [permissions.AllowAny, ]
+    permission_classes = [permissions.IsAuthenticated, ]
 
     def get(self, request):
         """" Получить список закладок """
@@ -25,7 +25,7 @@ class BookmarksView(APIView):
 
         # Находим нужную книгу
         try:
-            book = Book.objects.get(id=book_id)
+            book = Book.objects.get(id=book_id, owner=request.user)
         except:
             return Response(status=404, data='Книга с таким id не найдена')
 
@@ -47,7 +47,7 @@ class BookmarksView(APIView):
 
         # Находим нужную книгу
         try:
-            book = Book.objects.get(id=book_id)
+            book = Book.objects.get(id=book_id, owner=request.user)
         except:
             return Response(status=404, data='Книга с таким id не найдена')
 

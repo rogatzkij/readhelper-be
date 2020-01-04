@@ -18,7 +18,7 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ("id", "filename", "date", "current", "count", "page_size")
+        fields = ("id", "filename", "date", "current", "count")
 
 
 class WordSerializer(serializers.Serializer):

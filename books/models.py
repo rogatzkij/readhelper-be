@@ -25,10 +25,6 @@ class Book(models.Model):
     current = models.IntegerField(verbose_name="Текущая позиция (слово)")
     count = models.IntegerField(verbose_name="Всего слов")
 
-    # bookmarks
-    # hash
-    # color
-
     def get_page(self, position, count):
         """Метод служит для получения странцы (заглушка)"""
         # Все слова на странице
@@ -48,7 +44,14 @@ class Book(models.Model):
         # Формируем список слов на текущей странице
         for i in range(position, position + count):
             # Отсекаем знаки препинания
-            word_without_postfix = all_words[i].rstrip(string.whitespace).rstrip(string.punctuation)
+
+            try:
+                word_without_postfix = all_words[i].rstrip(string.whitespace).rstrip(string.punctuation)
+            except IndexError:
+                # Если на странице меньше слов чем запрашивают, выходим из цикла
+                break
+
+            #Знаки припенания
             postfix = all_words[i][len(word_without_postfix):]
 
             try:

@@ -19,7 +19,10 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # path('api/v1/user', include("user.urls")),
+    path('api/v1/auth/', include('djoser.urls')),
+    path('api/v1/auth/', include('djoser.urls.authtoken')),
+    path('api/v1/auth/', include('djoser.urls.jwt')),
+
     path('api/v1/books/', include("books.urls")),
     path('api/v1/bookmarks/', include("bookmarks.urls")),
 
